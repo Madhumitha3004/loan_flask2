@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: loan-flask-api
+    env: python
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn api:app
+    runtime: python
+    autoDeploy: true
