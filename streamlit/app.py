@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 st.set_page_config(page_title="Loan Approval Predictor", layout="centered")
 st.title("🏦 Loan Approval Prediction App")
 
+API_URL = "https://loan-flask1.onrender.com/predict"
 # --- Sidebar Inputs ---
 st.sidebar.header("Applicant Details")
 
@@ -79,7 +80,7 @@ for col in expected_features:
 # --- API Call and Prediction ---
 if st.button("Predict Loan Status"):
     try:
-        response = requests.post("http://127.0.0.1:5000/predict", json=input_data)
+        response = requests.post(API_URL, json=input_data)
         result = response.json()
         prediction = result["prediction"]
         probability = result["probability"]
