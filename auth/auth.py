@@ -20,15 +20,14 @@ def init_db():
     conn.commit()
     conn.close()
 
-
-
-@auth_bp.route('/signup', methods=['GET', 'POST'])
+@auth_bp.route('/signup', methods=['POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        phone = request.form['phone']
+        data = request.get_json()  # This will now parse the incoming JSON request
+        username = data.get('username')
+        password = data.get('password')
+        email = data.get('email')
+        phone = data.get('phone')
 
         conn = sqlite3.connect(DB_PATH)
         try:
@@ -37,12 +36,15 @@ def signup():
                 (username, password, email, phone)
             )
             conn.commit()
-            return redirect(url_for('auth.login'))
+            return jsonify({"message": "User created successfully"}), 200
         except sqlite3.IntegrityError:
-            return "Username already exists."
+            return jsonify({"message": "Username already exists"}), 409  # Conflict Error
+        except Exception as e:
+            return jsonify({"message": f"Error: {str(e)}"}), 500  # General error
         finally:
             conn.close()
     return render_template('signup.html')
+
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -74,3 +76,4 @@ def home():
 def logout():
     session.pop('user', None)
     return redirect(url_for('auth.login'))
+
