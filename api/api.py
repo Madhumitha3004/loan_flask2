@@ -1,15 +1,15 @@
-from flask import Flask, request, jsonify
+from flask import Blueprint, request, jsonify
 import joblib
 import pandas as pd
 
-app = Flask(__name__)
+api_bp = Blueprint('api_bp', __name__)
 
 # Load model and scaler
 model = joblib.load("models/loan_model.pkl")
 scaler = joblib.load("models/scaler.pkl")
 training_features = model.feature_names  # Use same features as in training
 
-@app.route("/predict", methods=["POST"])
+@api_bp.route("/predict", methods=["POST"])
 def predict():
     try:
         data = request.get_json()
@@ -36,6 +36,3 @@ def predict():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 400
-
-if __name__ == "__main__":
-    app.run(debug=True)
