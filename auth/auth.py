@@ -45,12 +45,12 @@ def signup():
             conn.close()
     return render_template('signup.html')
 
-
-@auth_bp.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        data = request.get_json()  # Ensure the request is JSON
+        username = data.get('username')
+        password = data.get('password')
 
         conn = sqlite3.connect(DB_PATH)
         user = conn.execute(
@@ -60,11 +60,9 @@ def login():
         conn.close()
 
         if user:
-            session['user'] = username
-            return redirect(url_for('auth.home'))
+            return jsonify({"success": True, "message": "Login successful"}), 200
         else:
-            return "Invalid credentials"
-    return render_template('login.html')
+            return jsonify({"success": False, "message": "Invalid credentials"}), 401  # Unauthorized
 
 @auth_bp.route('/home')
 def home():
