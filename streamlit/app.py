@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
 API_URL = "https://loan-flask2.onrender.com"  # Update this if needed
-PREDICT_URL = f"{API_URL}/predict"
+PREDICT_URL = f"{API_URL}/api/predict"
 
 # --------------------------
 # SESSION STATE INIT
@@ -62,7 +62,7 @@ def login_page():
                 st.session_state.authenticated = True
                 st.session_state.username = username
                 st.success("✅ Login successful")
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("❌ " + res.json().get("message", "Login failed"))
         except Exception as e:
@@ -79,7 +79,7 @@ def loan_prediction_app():
         st.session_state.authenticated = False
         st.session_state.username = None
         st.success("Logged out.")
-        st.experimental_rerun()
+        st.rerun()
 
     # --- Sidebar Inputs ---
     st.sidebar.header("Applicant Details")
