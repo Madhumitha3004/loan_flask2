@@ -20,6 +20,9 @@ if "username" not in st.session_state:
 # --------------------------
 # SIGNUP PAGE
 # --------------------------
+import re
+
+# --- Sign Up Page ---
 def signup_page():
     st.title("📝 Sign Up")
     username = st.text_input("Username", key="signup_user")
@@ -27,22 +30,37 @@ def signup_page():
     phone = st.text_input("Phone Number")
     password = st.text_input("Password", type="password", key="signup_pass")
 
-    if st.button("Sign Up"):
-        payload = {
-            "username": username,
-            "email": email,
-            "phone": phone,
-            "password": password
-        }
-        try:
-            res = requests.post(f"{API_URL}/signup", json=payload)
-            if res.status_code == 200:
-                st.success("✅ Registered successfully! Please log in.")
-            else:
-                st.error("❌ " + res.json().get("message", "Signup failed"))
-        except Exception as e:
-            st.error(f"🚨 Error connecting to server: {e}")
+    # Email validation using regex
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    email_valid = re.match(email_regex, email)
 
+    # Phone number validation (10 digits)
+    phone_valid = phone.isdigit() and len(phone) == 10
+
+    if st.button("Sign Up"):
+        # Check if the email and phone are valid
+        if not email_valid:
+            st.error("❌ Invalid email format. Please enter a valid email.")
+        elif not phone_valid:
+            st.error("❌ Invalid phone number. Please enter a 10-digit phone number.")
+        elif not username or not password:
+            st.error("❌ Please enter both a username and password.")
+        else:
+            # If everything is valid, proceed with the signup
+            payload = {
+                "username": username,
+                "email": email,
+                "phone": phone,
+                "password": password
+            }
+            try:
+                res = requests.post(f"{API_URL}/signup", json=payload)
+                if res.status_code == 200:
+                    st.success("✅ Registered successfully! Please log in.")
+                else:
+                    st.error("❌ " + res.json().get("message", "Signup failed"))
+            except Exception as e:
+                st.error(f"🚨 Error connecting to server: {e}")
 
 # --------------------------
 # LOGIN PAGE
