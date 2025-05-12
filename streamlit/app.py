@@ -257,7 +257,6 @@ def loan_prediction_app():
         except Exception as e:
             st.error(f"🚨 Failed to connect to prediction API: {e}")
 
-
 # --------------------------
 # MAIN APP ROUTER
 # --------------------------
